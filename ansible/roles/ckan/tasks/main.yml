@@ -1,0 +1,29 @@
+---
+
+- name: Install epel release repository
+  yum: name=epel-release state=latest
+
+- name: Install software for CKAN
+  yum: name={{ item }} state=present
+  with_items:
+    - httpd
+    - python-devel
+    - python-pip
+    - python-virtualenv
+    - git
+
+- name: Create dir for CKAN
+  file: path=/opt/data/ckan state=directory owner=apache group=apache
+
+- name: Create etc dir for CKAN
+  file: path=/opt/data/ckan/etc state=directory owner=apache group=apache mode=0700
+
+- name: Create dir for python virtual environment
+  file: path=/opt/data/ckan/pyenv state=directory owner=apache group=apache mode=0700
+
+- name: Initialize python virtual environment and install CKAN source code
+  shell: "virtualenv --no-site-packages /opt/data/ckan/pyenv && . /opt/data/ckan/pyenv/bin/activate && pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.5.1#egg=ckan' && deactivate"
+  sudo_user: apache
+
+
+    
