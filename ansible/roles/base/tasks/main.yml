@@ -2,3 +2,10 @@
 
 - name: Set time zone
   command: "timedatectl set-timezone Europe/Helsinki"
+
+- name: Create /opt/data
+  file: path=/opt/data state=directory
+
+- name: Set SELinux permissive
+  lineinfile: dest=/etc/selinux/config regexp=^SELINUX= line=SELINUX=permissive
+  notify: Set SELinux permissive, set to enforcing later!
