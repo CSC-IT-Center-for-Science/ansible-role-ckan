@@ -12,6 +12,10 @@
 - name: Unarchive Solr to tmp
   unarchive: src={{ solr_version }}.tgz dest=/tmp copy=yes
 
+- name: Stat Solr startup script
+  stat: path=/etc/init.d/solr
+  register: solr_init
+
 - name: Install Solr as a service
   shell: "/tmp/{{ solr_version }}/bin/install_solr_service.sh /tmp/{{ solr_version }}.tgz -d /opt/data/solr"
-  
+  when: solr_init.stat.exists == False
