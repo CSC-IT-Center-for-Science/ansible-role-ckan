@@ -1,0 +1,17 @@
+---
+
+- name: Install Java
+  yum: name=java-1.8.0-openjdk-devel state=latest
+
+- name: Create Solr directory
+  file: path=/opt/data/solr state=directory
+
+- name: Copy Solr to tmp (tgz is needed)
+  copy: src={{ solr_version }}.tgz dest=/tmp
+
+- name: Unarchive Solr to tmp
+  unarchive: src={{ solr_version }}.tgz dest=/tmp copy=yes
+
+- name: Install Solr as a service
+  shell: "/tmp/{{ solr_version }}/bin/install_solr_service.sh /tmp/{{ solr_version }}.tgz -d /opt/data/solr"
+  
