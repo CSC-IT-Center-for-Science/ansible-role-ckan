@@ -11,5 +11,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     lab.vm.box_url = "https://atlas.hashicorp.com/centos/boxes/7/versions/1509.01/providers/virtualbox.box"
     lab.vm.network :private_network, ip: "10.0.0.10"
     lab.vm.synced_folder "./src", "/sources"
+
+    lab.vm.provision "ansible" do |ansible|
+      ansible.playbook = "ansible/playbook.yml"
+      ansible.verbose = "v"
+      ansible.limit = "webserver"
+      ansible.inventory_path = "vagrant-ansible-inventory"
+    end
   end
 end

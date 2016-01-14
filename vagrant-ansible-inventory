@@ -1,0 +1,5 @@
+[webserver]
+10.0.0.10
+
+[webserver:vars]
+vagrant=true

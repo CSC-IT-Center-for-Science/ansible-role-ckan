@@ -1,0 +1,4 @@
+---
+
+- name: Set time zone
+  command: "timedatectl set-timezone Europe/Helsinki"
