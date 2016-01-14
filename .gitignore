@@ -1,0 +1,8 @@
+# Generic stuff
+*.swp
+*.retry
+/.vagrant/
+# Mad OS X
+.DS_Store
+# PyCharm
+.idea
