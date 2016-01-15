@@ -12,6 +12,12 @@
     - python-virtualenv
     - git
 
+- name: Create directories for apache user
+  file: path=/usr/share/httpd/.pip state=directory owner=apache group=apache
+
+- name: Allow apache to do stuff
+  shell: chsh -s /bin/bash apache
+
 - name: Create dir for CKAN
   file: path=/opt/data/ckan state=directory owner=apache group=apache
 
@@ -22,15 +28,17 @@
   file: path=/opt/data/ckan/pyenv state=directory owner=apache group=apache mode=0700
 
 - name: Initialize python virtual environment and install CKAN source code
-  shell: "virtualenv --no-site-packages /opt/data/ckan/pyenv && . /opt/data/ckan/pyenv/bin/activate && pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.5.1#egg=ckan' && deactivate"
+  shell: "virtualenv --no-site-packages /opt/data/ckan/pyenv && . /opt/data/ckan/pyenv/bin/activate && pip install -e 'git+https://github.com/ckan/ckan.git@release-v2.5.1#egg=ckan' && deactivate"
   sudo_user: apache
 
 - name: Install CKAN requirements
   shell: "source /opt/data/ckan/pyenv/bin/activate && pip install -r /opt/data/ckan/pyenv/src/ckan/requirements.txt && deactivate"
+  sudo_user: apache
 
 - name: Install CKAN dev requirements
   shell: "source /opt/data/ckan/pyenv/bin/activate && pip install -r /opt/data/ckan/pyenv/src/ckan/dev-requirements.txt && deactivate"
   tags: development
+  sudo_user: apache
 
 - name: Create CKAN db user
   shell: "psql -c \"CREATE ROLE apache ENCRYPTED PASSWORD '{{ ckandb_passwd }}' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN;\""
@@ -48,8 +56,14 @@
 
 - name: Create CKAN config file
   shell: "source /opt/data/ckan/pyenv/bin/activate && paster make-config ckan /opt/data/ckan/etc/ckan.ini && deactivate"
+  sudo_user: apache
 
 - name: Change sqlalchemy.url
-  lineinfile: dest=/opt/data/ckan/etc/ckan.ini regexp="^sqlalchemy.url = postgresql.*$" line="sqlalchemy.url = postgresql://apache:{{ ckandb_passwd }}@localhost/ckandb"
+  lineinfile: dest=/opt/data/ckan/etc/ckan.ini regexp="^sqlalchemy.url = postgresql.*$" line="sqlalchemy.url = postgresql://apache:{{ ckandb_passwd }}@127.0.0.1/ckandb"
 
+- name: Change site_url
+  lineinfile: dest=/opt/data/ckan/etc/ckan.ini regexp="^ckan.site_url.*$" line="ckan.site_url = http://10.0.0.10"
+
+- name: link who.ini
+  file: src=/opt/data/ckan/pyenv/src/ckan/who.ini dest=/opt/data/ckan/etc/who.ini state=link
 
