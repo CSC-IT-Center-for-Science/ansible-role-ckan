@@ -1,0 +1,10 @@
+# TYPE		DB		USER		ADDRESS		METHOD
+
+# Unix domain socket connections
+local		all		postgres			ident
+local		ckandb		apache				md5
+
+# IPv4 local connections
+host		ckandb		apache		127.0.0.1/32	md5
+
+# IPv6 local connections		
