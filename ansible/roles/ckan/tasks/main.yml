@@ -25,5 +25,17 @@
   shell: "virtualenv --no-site-packages /opt/data/ckan/pyenv && . /opt/data/ckan/pyenv/bin/activate && pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.5.1#egg=ckan' && deactivate"
   sudo_user: apache
 
+- name: Install CKAN requirements
+  shell: "source /opt/data/ckan/pyenv/bin/activate && pip install -r /opt/data/ckan/pyenv/src/ckan/requirements.txt && deactivate"
 
-    
+- name: Install CKAN dev requirements
+  shell: "source /opt/data/ckan/pyenv/bin/activate && pip install -r /opt/data/ckan/pyenv/src/ckan/dev-requirements.txt && deactivate"
+  tags: development
+
+- name: Create CKAN db user
+  shell: "psql -c \"CREATE ROLE apache ENCRYPTED PASSWORD '{{ ckandb_passwd }}' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN;\""
+  sudo_user: postgres
+
+- name: Create CKAN database
+  shell: "createdb -O apache ckandb -E utf-8"
+  sudo_user: postgres
