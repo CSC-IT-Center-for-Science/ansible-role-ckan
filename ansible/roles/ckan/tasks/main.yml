@@ -45,3 +45,11 @@
 
 - name: Restart postgresql
   service: name=postgresql state=restarted
+
+- name: Create CKAN config file
+  shell: "source /opt/data/ckan/pyenv/bin/activate && paster make-config ckan /opt/data/ckan/etc/ckan.ini && deactivate"
+
+- name: Change sqlalchemy.url
+  lineinfile: dest=/opt/data/ckan/etc/ckan.ini regexp="^sqlalchemy.url = postgresql.*$" line="sqlalchemy.url = postgresql://apache:{{ ckandb_passwd }}@localhost/ckandb"
+
+
