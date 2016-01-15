@@ -1,0 +1,28 @@
+---
+
+- name: Create directory for cores
+  file: path=/opt/data/solr/data/cores state=directory owner=solr group=solr
+
+- name: Create directory for core1
+  file: path=/opt/data/solr/data/cores/core1 state=directory owner=solr group=solr
+
+- name: Install core.properties for core1
+  template: src=core.properties.j2 dest=/opt/data/solr/data/cores/core1/core.properties owner=solr group=solr
+
+- name: Install solr.xml
+  template: src=solr.xml.j2 dest=/opt/data/solr/solr.xml owner=solr group=solr
+
+- name: Create conf directory
+  file: path=/opt/data/solr/data/cores/core1/conf state=directory owner=solr group=solr
+
+- name: Copy solrconfig.xml
+  shell: "cp -R /opt/solr/server/solr/configsets/basic_configs/conf/* /opt/data/solr/data/cores/core1/conf/"
+
+- name: Zoo.cfg
+  template: src=zoo.cfg.j2 dest=/opt/data/solr/zoo.cfg owner=solr group=solr
+
+- name: Copy schema.xml
+  shell: "cp -f /opt/data/ckan/pyenv/src/ckan/ckan/config/solr/schema.xml /opt/data/solr/data/cores/core1/conf/schema.xml && chown solr:solr /opt/data/solr/data/cores/core1/conf/schema.xml"
+
+- name: Restart solr
+  shell: "service solr restart"

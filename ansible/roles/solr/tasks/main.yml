@@ -19,3 +19,7 @@
 - name: Install Solr as a service
   shell: "/tmp/{{ solr_version }}/bin/install_solr_service.sh /tmp/{{ solr_version }}.tgz -d /opt/data/solr"
   when: solr_init.stat.exists == False
+
+#- name: Change Solr install dir for init.d
+#  lineinfile: dest=/etc/init.d/solr regexp=^SOLR_INSTALL_DIR.* line="SOLR_INSTALL_DIR=\"/opt/data/solr\""
+
