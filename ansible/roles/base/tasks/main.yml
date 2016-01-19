@@ -6,6 +6,11 @@
 - name: Create /opt/data
   file: path=/opt/data state=directory
 
+- name: Setenforce 0
+  command: "setenforce 0"
+
 - name: Set SELinux permissive
-  lineinfile: dest=/etc/selinux/config regexp=^SELINUX= line=SELINUX=permissive
-  notify: Set SELinux permissive, set to enforcing later!
+  lineinfile: dest=/etc/selinux/config regexp=^SELINUX= line=SELINUX=permissivie
+
+- name: Yell about SELinux
+  debug: msg="Set SELinux to permissive. For now, configure it manually."

@@ -64,6 +64,9 @@
 - name: Change site_url
   lineinfile: dest=/opt/data/ckan/etc/ckan.ini regexp="^ckan.site_url.*$" line="ckan.site_url = http://10.0.0.10"
 
+- name: Change solr_url
+  lineinfile: dest=/opt/data/ckan/etc/ckan.ini regexp="^#solr_url.*$" line="solr_url = http://127.0.0.1:8983/solr/core1"
+
 - name: link who.ini
   file: src=/opt/data/ckan/pyenv/src/ckan/who.ini dest=/opt/data/ckan/etc/who.ini state=link
 

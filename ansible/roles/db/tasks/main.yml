@@ -1,20 +1,27 @@
 ---
 
-- name: Install Postgresql directory
-  file: path=/opt/data/pgsql state=directory
-
 - name: Install Postgresql
   yum: name={{ item }} state=present
   with_items:
     - postgresql-server
     - postgresql-devel
 
-- name: Postgresql data dir
-  file: path=/opt/data/pgsql/data state=directory owner=postgres group=postgres
+- name: Install Postgresql directory
+  file: path={{ item }} state=directory owner=postgres group=postgres mode=700
+  with_items:
+    - /opt/data/pgsql
+    - /opt/data/pgsql/data
 
 - name: Check if Postgresql is already initialized
   stat: path=/opt/data/pgsql/data/pg_log
   register: pg_init
+
+- name: Create Postgres pgstartup.log
+  shell: "touch /opt/data/pgsql/pgstartup.log"
+  when: pg_init.stat.exists == False
+
+- name: Set owner for Postgres pgstartup.log
+  file: path=/opt/data/pgsql/pgstartup.log owner=postgres group=postgres
 
 - name: Init Postgresql database
   command: /usr/bin/initdb -D /opt/data/pgsql/data
