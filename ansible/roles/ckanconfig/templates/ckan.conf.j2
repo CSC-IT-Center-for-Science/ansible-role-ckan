@@ -1,0 +1,9 @@
+WSGIScriptAlias / /opt/data/ckan/pyenv/bin/wsgi.py
+WSGIPassAuthorization On
+
+<Directory /opt/data/ckan/pyenv>
+    Options All
+    AllowOverride All
+    Require all granted
+</Directory>
+

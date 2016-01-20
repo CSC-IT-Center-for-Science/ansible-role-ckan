@@ -30,3 +30,15 @@
 - name: Create CKAN db tables
   shell: "source /opt/data/ckan/pyenv/bin/activate && paster --plugin=ckan db init -c /opt/data/ckan/etc/ckan.ini && deactivate"
   sudo_user: apache
+
+- name: Install mod_wsgi
+  yum: name=mod_wsgi state=latest
+
+- name: wsgi.py
+  template: src=wsgi.py.j2 dest=/opt/data/ckan/pyenv/bin/wsgi.py owner=apache group=apache mode=0700
+
+- name: mod_wsgi
+  template: src=ckan.conf.j2 dest=/etc/httpd/conf.d/ckan.conf owner=apache group=apache mode=0600
+
+- name: Restart httpd
+  service: name=httpd state=restarted
