@@ -10,7 +10,7 @@
   command: "setenforce 0"
 
 - name: Set SELinux permissive
-  lineinfile: dest=/etc/selinux/config regexp=^SELINUX= line=SELINUX=permissivie
+  lineinfile: dest=/etc/selinux/config regexp="^SELINUX=" line="SELINUX=permissive"
 
 - name: Yell about SELinux
   debug: msg="Set SELinux to permissive. For now, configure it manually."
