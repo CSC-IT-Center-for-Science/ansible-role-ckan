@@ -28,8 +28,8 @@
   shell: "service solr restart"
 
 - name: Create CKAN db tables
-  shell: "source /opt/data/ckan/pyenv/bin/activate && paster --plugin=ckan db init -c /opt/data/ckan/etc/ckan.ini && deactivate"
   sudo_user: apache
+  shell: "source /opt/data/ckan/pyenv/bin/activate && paster --plugin=ckan db init -c /opt/data/ckan/etc/ckan.ini && deactivate"
 
 - name: Install mod_wsgi
   yum: name=mod_wsgi state=latest

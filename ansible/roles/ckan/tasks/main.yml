@@ -43,10 +43,16 @@
 - name: Create CKAN db user
   shell: "psql -c \"CREATE ROLE apache ENCRYPTED PASSWORD '{{ ckandb_passwd }}' NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN;\""
   sudo_user: postgres
+  register: psql_role
+  failed_when: psql_role.rc != 0 and ("already exists" not in psql_role.stderr)
+  changed_when: "psql_role.rc == 0"
 
 - name: Create CKAN database
   shell: "createdb -O apache ckandb -E utf-8"
   sudo_user: postgres
+  register: ckandb_create
+  failed_when: ckandb_create.rc != 0 and ("already exists" not in ckandb_create.stderr)
+  changed_when: "ckandb_create.rc == 0"
 
 - name: Configure db access
   template: src=pg_hba.conf.j2 dest=/opt/data/pgsql/data/pg_hba.conf owner=postgres group=postgres mode=0600
@@ -54,9 +60,14 @@
 - name: Restart postgresql
   service: name=postgresql state=restarted
 
+- name: Check if CKAN config file exists
+  stat: path=/opt/data/ckan/etc/ckan.ini
+  register: ini
+
 - name: Create CKAN config file
   shell: "source /opt/data/ckan/pyenv/bin/activate && paster make-config ckan /opt/data/ckan/etc/ckan.ini && deactivate"
   sudo_user: apache
+  when: ini.stat.exists == False
 
 - name: Change sqlalchemy.url
   lineinfile: dest=/opt/data/ckan/etc/ckan.ini regexp="^sqlalchemy.url = postgresql.*$" line="sqlalchemy.url = postgresql://apache:{{ ckandb_passwd }}@127.0.0.1/ckandb"
