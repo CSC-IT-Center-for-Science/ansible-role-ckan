@@ -11,8 +11,3 @@ Requirements:
 * ansible
 * virtualbox
 
-At the moment, vagrant seems to require (under investigation):
-
-* vagrant plugin install vagrant-vbguest
-* vagrant up && vagrant ssh + sudo yum update + exit && vagrant halt && vagrant up --provision
-
