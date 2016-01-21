@@ -2,7 +2,7 @@
 *.swp
 *.retry
 /.vagrant/
-# Mad OS X
+# Mac OS X
 .DS_Store
 # PyCharm
 .idea
